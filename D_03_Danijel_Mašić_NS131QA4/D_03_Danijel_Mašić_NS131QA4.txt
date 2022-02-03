@@ -1,0 +1,34 @@
+--prikazati datum, id_korisnik i ukupnu cenu iz narudzbine koja ima sve ocene 5
+SELECT n.datum, n.id_korisnik, n.ukupna_cena
+FROM narudzbina n JOIN ocene o
+ON n.id_narudzbina = o.id_narudzbina
+WHERE o.cena = 5 AND o.usluga = 5 AND o.kvalitet = 5;
+
+--prikazati ime korisnika koji je dao sve 5 za ocene za narudzbinu
+SELECT k.korisnicko_ime AS Dao_Sve_Petice
+FROM ((korisnik k 
+JOIN narudzbina n ON k.id_korisnik = n.id_korisnik)
+	  JOIN ocene o ON n.id_narudzbina = o.id_narudzbina)
+	  WHERE o.cena = 5 AND o.usluga = 5 AND o.kvalitet = 5;
+	  
+--prikazati prosecnu ocenu za uslugu za svakog korisnika (grupisati po korisnicima)
+SELECT AVG(o.usluga) AS prosecna_ocena, k.korisnicko_ime
+FROM ((ocene o 
+JOIN narudzbina n ON o.id_narudzbina = n.id_narudzbina)
+	  JOIN korisnik k ON n.id_korisnik = k.id_korisnik)
+GROUP BY korisnicko_ime
+
+--prikazati prosecnu ocenu za uslugu od ocena koje je dao Pera
+SELECT AVG(o.usluga) AS prosecna_ocena, k.korisnicko_ime AS ocenu_dao
+FROM ((ocene o 
+JOIN narudzbina n ON o.id_narudzbina = n.id_narudzbina)
+	  JOIN korisnik k ON n.id_korisnik = k.id_korisnik)
+GROUP BY k.korisnicko_ime
+HAVING k.korisnicko_ime iLIKE ('Pera');
+	  
+--prikazati koja je najveca prosecna ocena (po korisniku) za usluge
+SELECT MAX(o.usluga) AS najveca_prosecna, k.korisnicko_ime
+FROM((ocene o
+	   JOIN narudzbina n ON o.id_narudzbina = n.id_narudzbina)
+	  JOIN korisnik k ON n.id_korisnik = k.id_korisnik)
+	  GROUP BY k.korisnicko_ime;
